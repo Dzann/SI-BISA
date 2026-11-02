@@ -1,65 +1,130 @@
 <?php
+
 namespace App\Http\Controllers;
 
+use App\Models\KamusIsyarat;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-// CRUD aset BISINDO (khusus admin)
 class KamusAdminController extends Controller
 {
-    private function adminOnly(Request $r): void
+    /**
+     * GET /api/kamus
+     * Daftar seluruh aset isyarat (admin)
+     */
+    public function index(): JsonResponse
     {
-        abort_unless(optional($r->user())->role === 'admin', 403, 'Khusus admin');
+        $rows = KamusIsyarat::with('kategori')
+            ->orderBy('kata_dasar')
+            ->get();
+
+        return response()->json($rows);
     }
 
-    public function index(Request $r) { $this->adminOnly($r); return DB::table('kamus_isyarat')->orderBy('kata_dasar')->get(); }
-
-    public function store(Request $r)
+    /**
+     * POST /api/kamus
+     * Tambah aset isyarat
+     */
+    public function store(Request $r): JsonResponse
     {
-        $this->adminOnly($r);
         $r->validate([
-            'kata_dasar' => 'required|string|unique:kamus_isyarat,kata_dasar',
+            'kata_dasar' => 'required|string|max:100|unique:kamus_isyarat,kata_dasar',
             'kategori_id' => 'nullable|exists:kategori_isyarat,id',
             'media' => 'required|file|mimes:gif,png,jpg,jpeg,mp4,webm|max:10240', // format/ukuran salah -> 422
-            'durasi_ms' => 'nullable|integer',
+            'durasi_ms' => 'nullable|integer|min:500|max:10000',
         ]);
-        $f = $r->file('media');
-        $path = $f->store('bisindo', 'public');
-        $id = DB::table('kamus_isyarat')->insertGetId([
-            'kategori_id' => $r->kategori_id, 'kata_dasar' => mb_strtolower($r->kata_dasar),
-            'tipe_media' => $this->tipe($f->extension()), 'url_media' => $path,
+
+        $file = $r->file('media');
+        $path = $file->store('bisindo', 'public');
+
+        $kamus = KamusIsyarat::create([
+            'kategori_id' => $r->kategori_id,
+            'kata_dasar' => mb_strtolower($r->kata_dasar),
+            'tipe_media' => $this->detectMediaType($file->extension()),
+            'url_media' => $path,
             'durasi_ms' => $r->durasi_ms ?? 2000,
+            'is_active' => true,
         ]);
-        return response()->json(['message' => 'Berhasil disimpan', 'id' => $id], 201);
+
+        return response()->json([
+            'message' => 'Berhasil disimpan',
+            'id' => $kamus->id,
+        ], 201);
     }
 
-    public function update(Request $r, $id)
+    /**
+     * PUT /api/kamus/{id}
+     * Ubah aset isyarat
+     */
+    public function update(Request $r, $id): JsonResponse
     {
-        $this->adminOnly($r);
-        $row = DB::table('kamus_isyarat')->find($id); abort_unless($row, 404);
-        $r->validate(['media' => 'nullable|file|mimes:gif,png,jpg,jpeg,mp4,webm|max:10240']);
+        $kamus = KamusIsyarat::find($id);
+        abort_unless($kamus, 404, 'Isyarat tidak ditemukan');
+
+        $r->validate([
+            'kata_dasar' => 'nullable|string|max:100|unique:kamus_isyarat,kata_dasar,' . $id,
+            'kategori_id' => 'nullable|exists:kategori_isyarat,id',
+            'durasi_ms' => 'nullable|integer|min:500|max:10000',
+            'is_active' => 'nullable|boolean',
+            'media' => 'nullable|file|mimes:gif,png,jpg,jpeg,mp4,webm|max:10240',
+        ]);
+
         $data = $r->only(['kategori_id', 'durasi_ms', 'is_active']);
-        if ($r->filled('kata_dasar')) $data['kata_dasar'] = mb_strtolower($r->kata_dasar);
-        if ($f = $r->file('media')) {
-            Storage::disk('public')->delete($row->url_media);
-            $data += ['url_media' => $f->store('bisindo', 'public'), 'tipe_media' => $this->tipe($f->extension())];
+
+        if ($r->filled('kata_dasar')) {
+            $data['kata_dasar'] = mb_strtolower($r->kata_dasar);
         }
-        if ($data) DB::table('kamus_isyarat')->where('id', $id)->update($data);
-        return ['message' => 'Berhasil diperbarui'];
+
+        if ($file = $r->file('media')) {
+            if ($kamus->url_media && Storage::disk('public')->exists($kamus->url_media)) {
+                Storage::disk('public')->delete($kamus->url_media);
+            }
+            $data['url_media'] = $file->store('bisindo', 'public');
+            $data['tipe_media'] = $this->detectMediaType($file->extension());
+        }
+
+        if (!empty($data)) {
+            $kamus->update($data);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil diperbarui',
+        ]);
     }
 
-    public function destroy(Request $r, $id)
+    /**
+     * DELETE /api/kamus/{id}
+     * Hapus aset isyarat
+     */
+    public function destroy($id): JsonResponse
     {
-        $this->adminOnly($r);
-        $row = DB::table('kamus_isyarat')->find($id); abort_unless($row, 404);
-        Storage::disk('public')->delete($row->url_media);
-        DB::table('kamus_isyarat')->where('id', $id)->delete();
-        return ['message' => 'Berhasil dihapus'];
+        $kamus = KamusIsyarat::find($id);
+        abort_unless($kamus, 404, 'Isyarat tidak ditemukan');
+
+        if ($kamus->url_media && Storage::disk('public')->exists($kamus->url_media)) {
+            Storage::disk('public')->delete($kamus->url_media);
+        }
+
+        $kamus->delete();
+
+        return response()->json([
+            'message' => 'Berhasil dihapus',
+        ]);
     }
 
-    private function tipe(string $ext): string
+    /**
+     * Deteksi tipe media berdasarkan ekstensi
+     */
+    private function detectMediaType(string $ext): string
     {
-        return $ext === 'gif' ? 'gif' : (in_array($ext, ['mp4', 'webm']) ? 'video' : 'gambar');
+        $ext = strtolower($ext);
+        if ($ext === 'gif') {
+            return 'gif';
+        }
+        if (in_array($ext, ['mp4', 'webm'])) {
+            return 'video';
+        }
+        return 'gambar';
     }
 }

@@ -21,7 +21,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
+
+    /**
+     * Relasi ke sesi terjemahan
+     */
+    public function sesiTerjemah()
+    {
+        return $this->hasMany(SesiTerjemah::class, 'user_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.

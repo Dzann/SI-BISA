@@ -4,95 +4,517 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>@yield('title', 'SI-BISA')</title>
+  <title>@yield('title', 'SI-BISA - Penerjemah Suara ke Bahasa Isyarat')</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <style>
-    :root{--bg:#fff;--card:#f1f5f9;--txt:#1e293b;--mut:#64748b;--pri:#2563eb;--bd:#e2e8f0;--fs:16px}
-    html[data-theme=gelap]{--bg:#0f172a;--card:#1e293b;--txt:#e2e8f0;--mut:#94a3b8;--bd:#334155}
-    *{box-sizing:border-box} body{margin:0;font:var(--fs)/1.5 system-ui,sans-serif;background:var(--bg);color:var(--txt)}
-    a{color:var(--pri);text-decoration:none}
-    h1 span,.logo span{color:var(--pri)}
-    .btn{display:inline-block;padding:.6rem 1.2rem;border:0;border-radius:10px;background:var(--pri);color:#fff;cursor:pointer;font-size:1em}
-    .btn.sec{background:var(--card);color:var(--txt)} .btn.red{background:#dc2626} .btn:disabled{opacity:.5}
-    input,select{width:100%;padding:.65rem .8rem;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--txt);font-size:1em}
-    label{display:block;margin:.8rem 0 .25rem;font-weight:600}
-    .card{background:var(--card);border-radius:14px;padding:1rem;margin:.8rem 0}
-    .top{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.2rem;border-bottom:1px solid var(--bd)}
-    .logo{font-weight:800;font-size:1.3em;color:var(--txt)}
-    .shell{display:flex;min-height:calc(100vh - 62px)} .side{width:210px;padding:1rem;border-right:1px solid var(--bd)}
-    .side a{display:block;padding:.7rem 1rem;border-radius:10px;color:var(--txt);margin-bottom:.3rem}
-    .side a.on{background:var(--card);font-weight:700} .main{flex:1;padding:1.2rem;max-width:860px}
-    .warn{color:#b45309;margin:.5rem 0} .ok{color:#15803d}
-    .stage{min-height:280px;display:flex;align-items:center;justify-content:center;background:var(--card);border-radius:12px;overflow:hidden}
-    .stage img,.stage video{max-width:100%;max-height:300px}
-    .row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
-    .item{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--card);border-radius:12px;margin:.5rem 0}
-    table{width:100%;border-collapse:collapse} td,th{padding:.5rem;border-bottom:1px solid var(--bd);text-align:left}
-    @media(max-width:700px){.shell{flex-direction:column}.side{width:100%;display:flex;gap:.3rem;border:0;padding:.5rem}.side a{margin:0;flex:1;text-align:center}}
+    :root {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --bg-input: #ffffff;
+      --txt-main: #1e293b;
+      --txt-sub: #64748b;
+      --txt-muted: #94a3b8;
+      --border-color: #e2e8f0;
+      --border-focus: #3b82f6;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
+      --radius-pill: 9999px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
+      --shadow-btn: 0 4px 14px rgba(37,99,235,0.25);
+      --fs: 16px;
+    }
+
+    html[data-theme="gelap"] {
+      --bg-page: #0f172a;
+      --bg-card: #1e293b;
+      --bg-subtle: #334155;
+      --bg-input: #0f172a;
+      --txt-main: #f8fafc;
+      --txt-sub: #cbd5e1;
+      --txt-muted: #94a3b8;
+      --border-color: #334155;
+      --border-focus: #60a5fa;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-light: #1e3a8a;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.3);
+      --shadow-btn: 0 4px 14px rgba(59,130,246,0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-size: var(--fs);
+      line-height: 1.5;
+      background: var(--bg-page);
+      color: var(--txt-main);
+      min-height: 100vh;
+    }
+
+    a { color: var(--primary); text-decoration: none; transition: all 0.2s; }
+    a:hover { opacity: 0.85; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      border: 0;
+      border-radius: var(--radius-pill);
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.95em;
+      cursor: pointer;
+      box-shadow: var(--shadow-btn);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn.sec {
+      background: var(--bg-subtle);
+      color: var(--txt-main);
+      box-shadow: none;
+      border: 1px solid var(--border-color);
+    }
+    .btn.sec:hover { background: var(--border-color); }
+    .btn.red { background: var(--danger); box-shadow: 0 4px 14px rgba(239,68,68,0.25); color: #fff; }
+    .btn.sm { padding: 0.4rem 0.9rem; font-size: 0.85em; }
+
+    /* Inputs */
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
+      width: 100%;
+      padding: 0.75rem 1.1rem;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-input);
+      color: var(--txt-main);
+      font-size: 0.95em;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+    input:disabled, textarea:disabled {
+      background: var(--bg-subtle);
+      color: var(--txt-sub);
+      cursor: not-allowed;
+    }
+    .input-pill {
+      border-radius: var(--radius-pill) !important;
+    }
+
+    label {
+      display: block;
+      margin: 0.9rem 0 0.35rem;
+      font-weight: 600;
+      font-size: 0.9em;
+      color: var(--txt-sub);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.4rem;
+      margin: 1rem 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Layout Shell */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .app-sidebar {
+      width: 260px;
+      padding: 1.8rem 1.2rem;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 800;
+      font-size: 1.35em;
+      color: var(--txt-main);
+      margin-bottom: 2rem;
+      padding: 0 0.5rem;
+      text-decoration: none;
+    }
+    .brand-logo span { color: var(--primary); }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.85rem 1.2rem;
+      border-radius: var(--radius-pill);
+      color: var(--txt-sub);
+      font-weight: 600;
+      font-size: 0.95em;
+      transition: all 0.2s;
+    }
+    .nav-link:hover {
+      background: var(--bg-subtle);
+      color: var(--txt-main);
+    }
+    .nav-link.active {
+      background: var(--bg-subtle);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .nav-link svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2;
+    }
+
+    .app-main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 960px;
+    }
+
+    .app-header-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .user-avatar-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--txt-main);
+      font-size: 1.2em;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .user-avatar-btn:hover {
+      background: var(--border-color);
+      transform: scale(1.05);
+    }
+
+    /* Tabs */
+    .tab-bar {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      padding: 4px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1.2rem;
+      border: 1px solid var(--border-color);
+    }
+    .tab-btn {
+      background: transparent;
+      border: 0;
+      padding: 0.55rem 1.2rem;
+      font-size: 0.9em;
+      font-weight: 600;
+      color: var(--txt-sub);
+      cursor: pointer;
+      border-radius: var(--radius-pill);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Video / Animation Stage */
+    .stage {
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin: 1rem 0;
+      position: relative;
+    }
+    .stage img, .stage video {
+      max-width: 100%;
+      max-height: 340px;
+      border-radius: var(--radius-md);
+      object-fit: contain;
+    }
+
+    /* Lists & Tables */
+    .item-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 1.3rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin: 0.7rem 0;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .item-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .row { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+    .warn { color: var(--danger); font-size: 0.9em; margin: 0.6rem 0; font-weight: 500; }
+    .ok { color: var(--success); font-size: 0.9em; margin: 0.6rem 0; font-weight: 500; }
+    table { width: 100%; border-collapse: collapse; }
+    td, th { padding: 0.75rem 0.6rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+
+    /* Responsive */
+    @media (max-width: 820px) {
+      .app-shell { flex-direction: column; }
+      .app-sidebar {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        border-right: 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .brand-logo { margin-bottom: 0; }
+      .app-main { padding: 1.2rem; }
+      .nav-links-wrap {
+        display: flex;
+        gap: 0.4rem;
+      }
+      .nav-link span { display: none; }
+      .nav-link { padding: 0.5rem; }
+    }
   </style>
+
   <script>
-    // ---- pengaturan (disimpan di browser) ----
+    // Pengaturan konfigurasi aplikasi (disimpan di browser)
     const DEF = {theme:'terang', size:'sedang', speed:1, autoplay:true, repeat:false, simpan:true};
     const S = Object.assign({}, DEF, (()=>{try{return JSON.parse(localStorage.getItem('sibisa'))||{}}catch(e){return {}}})());
     const saveS = () => localStorage.setItem('sibisa', JSON.stringify(S));
     function applyS(){
       document.documentElement.dataset.theme = S.theme === 'gelap' ? 'gelap' : 'terang';
-      document.documentElement.style.setProperty('--fs', {kecil:'14px',sedang:'16px',besar:'19px'}[S.size]);
+      document.documentElement.style.setProperty('--fs', {kecil:'14px',sedang:'16px',besar:'18px'}[S.size]);
     }
     applyS();
   </script>
 </head>
 <body>
+
 @hasSection('bare')
   @yield('content')
 @else
-  <div class="top">
-    <a class="logo" href="/">✋ SI-<span>BISA</span></a>
-    <a href="/akun" title="Akun">👤</a>
-  </div>
-  <div class="shell">
-    <nav class="side">
-      <a href="/app"        class="{{ request()->is('app') ? 'on' : '' }}">🏠 Beranda</a>
-      <a href="/riwayat"   class="{{ request()->is('riwayat*') ? 'on' : '' }}">🕘 Riwayat</a>
-      <a href="/pengaturan" class="{{ request()->is('pengaturan') ? 'on' : '' }}">⚙️ Pengaturan</a>
-    </nav>
-    <main class="main">@yield('content')</main>
+  <div class="app-shell">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar">
+      <a class="brand-logo" href="/" style="display: inline-flex; align-items: center; margin-bottom: 2rem; padding: 0 0.2rem;">
+        <img src="{{ asset('storage/Logo/PACKAGES-04.png') }}" alt="SI-BISA" style="height: 46px; width: auto; max-width: 180px; object-fit: contain;">
+      </a>
+
+      <div class="nav-links-wrap" style="display:flex; flex-direction:column; gap:0.4rem; width:100%">
+        <a href="/app" class="nav-link {{ request()->is('app') ? 'active' : '' }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/riwayat" class="nav-link {{ request()->is('riwayat*') ? 'active' : '' }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span>Riwayat</span>
+        </a>
+        <a href="/pengaturan" class="nav-link {{ request()->is('pengaturan') ? 'active' : '' }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Pengaturan</span>
+        </a>
+      </div>
+
+      <!-- Footer Sidebar Navigasi -->
+      <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.6rem;">
+        <a href="/" class="nav-link" style="color: var(--txt-sub);" title="Kembali ke Landing Page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          <span>Landing Page</span>
+        </a>
+        @auth
+          @if(auth()->user()->role === 'admin')
+            <a href="/admin" class="btn sm" style="border-radius: var(--radius-pill); font-size: 0.85em; text-decoration: none;">
+              🛠️ Panel Admin
+            </a>
+          @endif
+        @else
+          <a href="/login" class="btn sec sm" style="border-radius: var(--radius-pill); font-size: 0.85em; text-decoration: none;">
+            🔐 Login Admin
+          </a>
+        @endauth
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="app-main">
+      <div class="app-header-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <!-- Tombol Kembali ke Landing Page -->
+        <a href="/" class="btn sec sm" style="border-radius: var(--radius-pill); font-size: 0.85em; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Landing Page</span>
+        </a>
+
+        <!-- Bar Kanan: Tombol Login Admin + Avatar Profil -->
+        <div class="row" style="gap: 0.8rem;">
+          @guest
+            <a href="/login" class="btn sec sm" style="border-radius: var(--radius-pill); font-size: 0.85em; text-decoration: none;">
+              🔐 Login Admin
+            </a>
+          @else
+            @if(auth()->user()->role === 'admin')
+              <a href="/admin" class="btn sec sm" style="border-radius: var(--radius-pill); font-size: 0.85em; text-decoration: none;">
+                🛠️ Panel Admin
+              </a>
+            @endif
+          @endguest
+          <a href="/akun" class="user-avatar-btn" title="Akun Saya">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </a>
+        </div>
+      </div>
+      @yield('content')
+    </main>
   </div>
 @endif
 
 <script>
   const $ = id => document.getElementById(id);
-  const csrf = document.querySelector('meta[name=csrf-token]').content;
+  const csrf = document.querySelector('meta[name=csrf-token]')?.content || '';
   const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  
   async function api(url, o = {}){
     const h = {'Accept':'application/json','X-CSRF-TOKEN':csrf};
     if (o.json){ h['Content-Type']='application/json'; o.body = JSON.stringify(o.json); delete o.json; }
     const r = await fetch(url, {credentials:'same-origin', ...o, headers:{...h, ...(o.headers||{})}});
     let d = null; try { d = await r.json(); } catch(e){}
-    if (!r.ok) throw Object.assign(new Error(d?.message || 'Terjadi kesalahan'), {status:r.status, data:d});
+    if (!r.ok) throw Object.assign(new Error(d?.message || 'Terjadi kesalahan sistem'), {status:r.status, data:d});
     return d;
   }
-  const fmtTgl = s => new Date(s.replace(' ','T')+'Z').toLocaleString('id-ID',{dateStyle:'long',timeStyle:'short'});
+  
+  const fmtTgl = s => {
+    try {
+      return new Date(s.replace(' ','T')+'Z').toLocaleString('id-ID',{dateStyle:'long',timeStyle:'short'}) + ' WIB';
+    } catch(e){
+      return s;
+    }
+  };
 
-  // ---- pemutar urutan isyarat (dipakai Beranda & Detail Riwayat) ----
+  // ---- Pemutar urutan isyarat visual BISINDO ----
   function Player(stage, label, counter){
     const P = {items:[], i:-1, t:null, playing:false};
+    
     const render = () => {
       clearTimeout(P.t);
-      const it = P.items[P.i]; if (!it) return;
-      label.textContent = `${it.kata_asli} → ${it.kata_dasar}`;
-      counter.textContent = `Gerakan ${P.i+1} dari ${P.items.length}`;
+      const it = P.items[P.i];
+      if (!it) return;
+      
+      if (label) label.textContent = `${it.kata_asli} → ${it.kata_dasar}`;
+      if (counter) counter.textContent = `Gerakan ${P.i+1} dari ${P.items.length}`;
+      
       stage.innerHTML = it.tipe_media === 'video'
         ? `<video src="${esc(it.url_media)}" autoplay muted playsinline></video>`
         : `<img src="${esc(it.url_media)}" alt="${esc(it.kata_dasar)}">`;
-      const v = stage.querySelector('video'); if (v) v.playbackRate = S.speed;
-      if (P.playing) P.t = setTimeout(P.next, (it.durasi_ms || 2000) / S.speed);
+        
+      const v = stage.querySelector('video');
+      if (v) v.playbackRate = S.speed;
+      
+      if (P.playing) {
+        P.t = setTimeout(P.next, (it.durasi_ms || 2000) / S.speed);
+      }
     };
-    P.add = list => { const was = P.items.length; P.items.push(...list.filter(x => x.url_media));
-      if (P.items.length && (!P.playing || was === 0) && S.autoplay){ P.playing = true; P.i = Math.min(was, P.items.length-1); render(); } else if (P.i < 0 && P.items.length){ P.i = 0; render(); } };
-    P.next = () => { if (P.i < P.items.length-1){ P.i++; render(); }
-                     else if (S.repeat && P.items.length){ P.i = 0; render(); } else { P.playing = false; clearTimeout(P.t); } };
-    P.prev = () => { if (P.i > 0){ P.i--; render(); } };
-    P.toggle = () => { P.playing = !P.playing; if (P.playing){ if (P.i >= P.items.length-1 && !S.repeat) P.i = 0; } render(); if(!P.playing) clearTimeout(P.t); };
+    
+    P.add = list => {
+      const was = P.items.length;
+      P.items.push(...list.filter(x => x.url_media));
+      if (P.items.length && (!P.playing || was === 0) && S.autoplay){
+        P.playing = true;
+        P.i = Math.min(was, P.items.length - 1);
+        render();
+      } else if (P.i < 0 && P.items.length){
+        P.i = 0;
+        render();
+      }
+    };
+    
+    P.next = () => {
+      if (P.i < P.items.length - 1){
+        P.i++;
+        render();
+      } else if (S.repeat && P.items.length){
+        P.i = 0;
+        render();
+      } else {
+        P.playing = false;
+        clearTimeout(P.t);
+      }
+    };
+    
+    P.prev = () => {
+      if (P.i > 0){
+        P.i--;
+        render();
+      }
+    };
+    
+    P.clear = () => {
+      clearTimeout(P.t);
+      P.items = [];
+      P.i = -1;
+      P.playing = false;
+      stage.textContent = '—';
+      if (label) label.textContent = '';
+      if (counter) counter.textContent = 'Gerakan 0 dari 0';
+    };
+    
+    P.toggle = () => {
+      P.playing = !P.playing;
+      if (P.playing){
+        if (P.i >= P.items.length - 1 && !S.repeat) P.i = 0;
+      }
+      render();
+      if (!P.playing) clearTimeout(P.t);
+    };
+    
     return P;
   }
 </script>

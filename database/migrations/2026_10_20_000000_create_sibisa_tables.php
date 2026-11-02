@@ -39,7 +39,7 @@ return new class extends Migration {
             $t->text('teks_stemming');
             $t->float('confidence')->nullable();
             $t->unsignedInteger('waktu_proses_ms')->nullable();
-            $t->timestamp('created_at')->useCurrent();
+            $t->timestamp('created_at')->useCurrent()->index();
         });
 
         Schema::create('detail_kata', function (Blueprint $t) {
@@ -50,6 +50,7 @@ return new class extends Migration {
             $t->string('kata_asli');
             $t->string('kata_dasar');
             $t->boolean('status_match')->default(false);
+            $t->index(['terjemahan_id', 'urutan']);
         });
 
         Schema::create('hasil_pengujian', function (Blueprint $t) {
