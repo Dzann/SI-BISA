@@ -55,6 +55,100 @@
       --shadow-btn: 0 4px 14px rgba(59,130,246,0.3);
     }
 
+    /* Logo Switching untuk Mode Terang & Mode Gelap */
+    .logo-dark {
+      display: none !important;
+    }
+    .logo-light {
+      display: inline-block !important;
+    }
+
+    html[data-theme="gelap"] .logo-dark {
+      display: inline-block !important;
+    }
+    html[data-theme="gelap"] .logo-light {
+      display: none !important;
+    }
+
+    /* Styling Landing Page Khusus Dark Mode */
+    .landing-hero {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1px solid #dbeafe;
+      border-radius: var(--radius-xl);
+      padding: 3.5rem 3rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+    .landing-hero h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1.1;
+      margin-bottom: 0.6rem;
+    }
+    .landing-hero .hero-sub {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 1.2rem;
+    }
+    .landing-hero .hero-desc {
+      font-size: 1.05rem;
+      color: #64748b;
+      max-width: 620px;
+      line-height: 1.6;
+      margin-bottom: 2.2rem;
+    }
+
+    html[data-theme="gelap"] .landing-hero {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+      border-color: #334155 !important;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 25px rgba(59, 130, 246, 0.12) !important;
+    }
+    html[data-theme="gelap"] .landing-hero h1 {
+      color: #f8fafc !important;
+    }
+    html[data-theme="gelap"] .landing-hero .hero-sub {
+      color: #93c5fd !important;
+    }
+    html[data-theme="gelap"] .landing-hero .hero-desc {
+      color: #cbd5e1 !important;
+    }
+
+    .feature-icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #eff6ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4em;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    html[data-theme="gelap"] .feature-icon-circle {
+      background: rgba(59, 130, 246, 0.18) !important;
+      color: #93c5fd !important;
+    }
+
+    .step-icon-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3em;
+      margin-bottom: 1rem;
+      transition: background 0.2s;
+    }
+    html[data-theme="gelap"] .step-icon-circle {
+      background: #334155 !important;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -328,12 +422,36 @@
 
   <script>
     // Pengaturan konfigurasi aplikasi (disimpan di browser)
-    const DEF = {theme:'terang', size:'sedang', speed:1, autoplay:true, repeat:false, simpan:true};
+    const DEF = {
+      theme: (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'gelap' : 'terang',
+      size: 'sedang',
+      speed: 1,
+      autoplay: true,
+      repeat: false,
+      simpan: true
+    };
     const S = Object.assign({}, DEF, (()=>{try{return JSON.parse(localStorage.getItem('sibisa'))||{}}catch(e){return {}}})());
     const saveS = () => localStorage.setItem('sibisa', JSON.stringify(S));
     function applyS(){
-      document.documentElement.dataset.theme = S.theme === 'gelap' ? 'gelap' : 'terang';
+      const isDark = S.theme === 'gelap';
+      document.documentElement.dataset.theme = isDark ? 'gelap' : 'terang';
       document.documentElement.style.setProperty('--fs', {kecil:'14px',sedang:'16px',besar:'18px'}[S.size]);
+      
+      // Sinkronisasi teks / ikon tombol toggle tema jika ada
+      document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+        btn.innerHTML = isDark ? '☀️' : '🌙';
+        btn.setAttribute('aria-label', isDark ? 'Ganti ke Tema Terang' : 'Ganti ke Tema Gelap');
+        btn.title = isDark ? 'Ganti ke Tema Terang' : 'Ganti ke Tema Gelap';
+      });
+    }
+    function toggleTheme(){
+      S.theme = S.theme === 'gelap' ? 'terang' : 'gelap';
+      saveS();
+      applyS();
+      // Sinkronisasi radio di halaman pengaturan jika sedang dibuka
+      document.querySelectorAll('input[name="theme"]').forEach(r => {
+        r.checked = (r.value === S.theme);
+      });
     }
     applyS();
   </script>
@@ -347,7 +465,8 @@
     <!-- Sidebar Navigation -->
     <aside class="app-sidebar">
       <a class="brand-logo" href="/" style="display: inline-flex; align-items: center; margin-bottom: 2rem; padding: 0 0.2rem;">
-        <img src="{{ asset('storage/Logo/PACKAGES-04.png') }}" alt="SI-BISA" style="height: 46px; width: auto; max-width: 180px; object-fit: contain;">
+        <img src="{{ asset('logo/PACKAGES-04.png') }}" alt="SI-BISA" class="logo-light" style="height: 46px; width: auto; max-width: 180px; object-fit: contain;">
+        <img src="{{ asset('logo/SI-BISA Black.png') }}" alt="SI-BISA" class="logo-dark" style="height: 46px; width: auto; max-width: 180px; object-fit: contain;">
       </a>
 
       <div class="nav-links-wrap" style="display:flex; flex-direction:column; gap:0.4rem; width:100%">
@@ -394,8 +513,11 @@
           <span>Landing Page</span>
         </a>
 
-        <!-- Bar Kanan: Tombol Login Admin + Avatar Profil -->
+        <!-- Bar Kanan: Tombol Switch Tema + Tombol Login Admin + Avatar Profil -->
         <div class="row" style="gap: 0.8rem;">
+          <button type="button" class="theme-toggle-btn btn sec sm" onclick="toggleTheme()" title="Ganti Tema" style="border-radius: var(--radius-pill); padding: 0.45rem 0.8rem; font-size: 1.05em; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+            🌓
+          </button>
           @guest
             <a href="/login" class="btn sec sm" style="border-radius: var(--radius-pill); font-size: 0.85em; text-decoration: none;">
               🔐 Login Admin

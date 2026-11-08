@@ -60,7 +60,7 @@
 
   <a class="item-card" id="adminLink" href="/admin" style="border-radius: var(--radius-lg); text-decoration: none; display: none;">
     <div style="display: flex; align-items: center; gap: 1rem;">
-      <div style="width: 42px; height: 42px; border-radius: 50%; background: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--primary);">
+      <div style="width: 42px; height: 42px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--primary);">
         🛠️
       </div>
       <div>

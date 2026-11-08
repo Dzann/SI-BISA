@@ -18,7 +18,9 @@ return new class extends Migration {
             $t->id();
             $t->foreignId('kategori_id')->nullable()->constrained('kategori_isyarat')->nullOnDelete();
             $t->string('kata_dasar')->unique();
-            $t->enum('tipe_media', ['gif', 'gambar', 'video']);
+            // Gunakan string agar kompatibel dengan SQLite (saat testing) maupun MySQL (produksi)
+            // Validasi tipe dilakukan di layer Controller
+            $t->string('tipe_media', 10);
             $t->string('url_media');
             $t->unsignedInteger('durasi_ms')->default(2000);
             $t->boolean('is_active')->default(true);

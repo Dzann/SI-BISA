@@ -7,11 +7,15 @@
 <header style="background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 1rem 1.8rem; box-shadow: var(--shadow-sm);">
   <div style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
     <a class="brand-logo" href="/" style="margin-bottom:0; padding:0; display:flex; align-items:center; gap:0.6rem;">
-      <img src="{{ asset('storage/Logo/PACKAGES-04.png') }}" alt="SI-BISA" style="height: 42px; width: auto; object-fit: contain;">
+      <img src="{{ asset('logo/PACKAGES-04.png') }}" alt="SI-BISA" class="logo-light" style="height: 42px; width: auto; object-fit: contain;">
+      <img src="{{ asset('logo/SI-BISA Black.png') }}" alt="SI-BISA" class="logo-dark" style="height: 42px; width: auto; object-fit: contain;">
       <span style="font-size:0.7em; background:var(--primary-light); color:var(--primary); padding:0.2rem 0.6rem; border-radius:var(--radius-pill); font-weight:700;">ADMIN</span>
     </a>
 
     <div class="row" style="gap: 0.8rem;">
+      <button type="button" class="theme-toggle-btn btn sec sm" onclick="toggleTheme()" title="Ganti Tema" style="border-radius: var(--radius-pill); padding: 0.45rem 0.8rem; font-size: 1.05em; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+        🌓
+      </button>
       <a href="/" class="btn sec sm" style="border-radius: var(--radius-pill); text-decoration: none;">
         🌐 Landing Page
       </a>
