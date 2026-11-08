@@ -8,7 +8,7 @@
   <div style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
     <a class="brand-logo" href="/" style="margin-bottom:0; padding:0; display:flex; align-items:center; gap:0.6rem;">
       <img src="{{ asset('logo/PACKAGES-04.png') }}" alt="SI-BISA" class="logo-light" style="height: 42px; width: auto; object-fit: contain;">
-      <img src="{{ asset('logo/SI-BISA Black.png') }}" alt="SI-BISA" class="logo-dark" style="height: 42px; width: auto; object-fit: contain;">
+      <img src="{{ asset('logo/SI-BISA Black.png') }}?v=2" alt="SI-BISA" class="logo-dark" style="height: 42px; width: auto; object-fit: contain;">
       <span style="font-size:0.7em; background:var(--primary-light); color:var(--primary); padding:0.2rem 0.6rem; border-radius:var(--radius-pill); font-weight:700;">ADMIN</span>
     </a>
 

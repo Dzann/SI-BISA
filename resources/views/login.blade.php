@@ -8,7 +8,7 @@
     <!-- Official Brand Logo -->
     <div style="margin: 0 auto 1.4rem; text-align: center;">
       <img src="{{ asset('logo/PACKAGES-04.png') }}" alt="SI-BISA" class="logo-light" style="height: 64px; width: auto; max-width: 220px; object-fit: contain;">
-      <img src="{{ asset('logo/SI-BISA Black.png') }}" alt="SI-BISA" class="logo-dark" style="height: 64px; width: auto; max-width: 220px; object-fit: contain;">
+      <img src="{{ asset('logo/SI-BISA Black.png') }}?v=2" alt="SI-BISA" class="logo-dark" style="height: 64px; width: auto; max-width: 220px; object-fit: contain;">
     </div>
 
     <h2 style="font-size: 1.35em; font-weight: 700; color: var(--txt-main); margin-bottom: 1.8rem;">

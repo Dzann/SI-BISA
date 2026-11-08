@@ -7,7 +7,7 @@
 <header style="max-width: 1100px; margin: 0 auto; padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between;">
   <a class="brand-logo" href="/" style="margin-bottom:0; padding:0; display: inline-flex; align-items: center;">
     <img src="{{ asset('logo/PACKAGES-04.png') }}" alt="SI-BISA" class="logo-light" style="height: 48px; width: auto; object-fit: contain;">
-    <img src="{{ asset('logo/SI-BISA Black.png') }}" alt="SI-BISA" class="logo-dark" style="height: 48px; width: auto; object-fit: contain;">
+    <img src="{{ asset('logo/SI-BISA Black.png') }}?v=2" alt="SI-BISA" class="logo-dark" style="height: 48px; width: auto; object-fit: contain;">
   </a>
 
   <div class="row" style="gap: 1.2rem; align-items: center;">

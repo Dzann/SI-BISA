@@ -466,7 +466,7 @@
     <aside class="app-sidebar">
       <a class="brand-logo" href="/" style="display: inline-flex; align-items: center; margin-bottom: 2rem; padding: 0 0.2rem;">
         <img src="{{ asset('logo/PACKAGES-04.png') }}" alt="SI-BISA" class="logo-light" style="height: 46px; width: auto; max-width: 180px; object-fit: contain;">
-        <img src="{{ asset('logo/SI-BISA Black.png') }}" alt="SI-BISA" class="logo-dark" style="height: 46px; width: auto; max-width: 180px; object-fit: contain;">
+        <img src="{{ asset('logo/SI-BISA Black.png') }}?v=2" alt="SI-BISA" class="logo-dark" style="height: 46px; width: auto; max-width: 180px; object-fit: contain;">
       </a>
 
       <div class="nav-links-wrap" style="display:flex; flex-direction:column; gap:0.4rem; width:100%">
