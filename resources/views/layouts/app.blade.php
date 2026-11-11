@@ -7,9 +7,10 @@
   <title>@yield('title', 'SI-BISA - Penerjemah Suara ke Bahasa Isyarat')</title>
   
   <!-- Favicon Tab Browser (SI-BISA WEB) -->
-  <link rel="icon" type="image/png" href="{{ asset('logo/SI-BISA WEB.png') }}?v=1">
-  <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=1">
-  <link rel="apple-touch-icon" href="{{ asset('logo/SI-BISA WEB.png') }}?v=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}?v=4">
+  <link rel="icon" type="image/png" sizes="128x128" href="{{ asset('logo/SI-BISA WEB.png') }}?v=4">
+  <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=4">
+  <link rel="apple-touch-icon" href="{{ asset('logo/SI-BISA WEB.png') }}?v=4">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
